@@ -4,16 +4,22 @@ describe Saxy::Parser do
   include FixturesHelper
 
   let(:parser) { Saxy::Parser.new(fixture_file("webstore.xml"), "product") }
+  let(:file_io) { File.new(fixture_file("webstore.xml")) }
 
-  it "should accept string filename as xml_file" do
+  it "should accept string filename for parsing" do
     xml_file = fixture_file("webstore.xml")
     parser = Saxy::Parser.new(xml_file, "product")
     parser.each.to_a.size.should == 2
   end
 
-  it "should accept IO as xml_file" do
-    xml_file = File.new(fixture_file("webstore.xml"))
-    parser = Saxy::Parser.new(xml_file, "product")
+  it "should accept IO for parsing" do
+    parser = Saxy::Parser.new(file_io, "product")
+    parser.each.to_a.size.should == 2
+  end
+
+  it "should accept an IO-like for parsing" do
+    allow(file_io).to receive(:is_a?).with(IO).and_return(false)
+    parser = Saxy::Parser.new(file_io, "product")
     parser.each.to_a.size.should == 2
   end
 
